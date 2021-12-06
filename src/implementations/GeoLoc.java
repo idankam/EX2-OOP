@@ -1,5 +1,5 @@
-package api;
-
+package implementations;
+import api.*;
 public class GeoLoc implements GeoLocation {
 
     private double x;
@@ -24,8 +24,13 @@ public class GeoLoc implements GeoLocation {
 
     @Override
     public double distance(GeoLocation g) {
-        GeoLoc tmp = (api.GeoLoc) g;
+        GeoLoc tmp = (GeoLoc) g;
         double dist = Math.sqrt(Math.pow(this.x - g.x(), 2) + Math.pow(this.y - g.y(), 2) + Math.pow(this.z - g.z(), 2));
         return dist;
+    }
+
+    public GeoLoc copy(){
+        GeoLoc temp = new GeoLoc(x, y, z);
+        return temp;
     }
 }

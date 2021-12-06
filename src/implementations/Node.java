@@ -1,8 +1,10 @@
-package api;
+package implementations;
+
+import api.*;
 
 import java.util.HashMap;
 
-public class Node implements NodeData{
+public class Node implements NodeData {
 
     private int _key;
     private HashMap<Integer, Edge> _edges;
@@ -101,6 +103,23 @@ public class Node implements NodeData{
 
     public Edge removeEdge(int dst){
         return this._edges.remove(dst);
+    }
+
+    public Node copy(){
+        HashMap<Integer, Edge> edges = new HashMap<>();
+        for (Integer key : _edges.keySet()){
+            edges.put(key, _edges.get(key).copy());
+        }
+
+        Node node_copy = new Node(this._key, edges, this._location.copy());
+        node_copy.setInfo(this._info);
+        node_copy.setTag(this._tag);
+
+        return node_copy;
+    }
+
+    public void cleanEdges(){
+        this._edges.clear();
     }
 }
 

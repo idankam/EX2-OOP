@@ -1,4 +1,6 @@
-package api;
+package implementations;
+
+import api.EdgeData;
 
 public class Edge implements EdgeData {
 
@@ -6,12 +8,14 @@ public class Edge implements EdgeData {
     private int _dst;
     private double _weight;
     private int _tag;
+    private String _info = "";
 
     public Edge(int src, int dst, double weight){
         this._src = src;
         this._dst = dst;
         this._weight = weight;
         this._tag = Integer.parseInt(null);
+
     }
 
 
@@ -40,17 +44,14 @@ public class Edge implements EdgeData {
      * @return
      */
     public String getInfo(){
-        String info = "src: " + _src +
-                "\ndst: " + _dst +
-                "\nweight: " + _weight;
-        return info;
+        return _info;
     }
     /**
      * Allows changing the remark (meta data) associated with this edge.
      * @param s
      */
     public void setInfo(String s){
-        return; ///////////////////// complete!!!!!!!
+        this._info = s;
     }
     /**
      * Temporal data (aka color: e,g, white, gray, black)
@@ -67,5 +68,12 @@ public class Edge implements EdgeData {
      */
     public void setTag(int t){
         this._tag = t;
+    }
+
+    public Edge copy(){
+        Edge edge_copy = new Edge(this._src, this._dst, this._weight);
+        edge_copy.setTag(this._tag);
+        edge_copy.setInfo(this._info);
+        return edge_copy;
     }
 }

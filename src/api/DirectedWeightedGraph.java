@@ -1,4 +1,9 @@
 package api;
+import api.EdgeData;
+import api.NodeData;
+import implementations.Edge;
+import implementations.Node;
+
 import java.util.Iterator;
 /**
  * This interface represents a Directional Weighted Graph,
@@ -44,13 +49,13 @@ public interface DirectedWeightedGraph {
 	 * Note: if the graph was changed since the iterator was constructed - a RuntimeException should be thrown.
 	 * @return Iterator<node_data>
 	 */
-	public Iterator<NodeData> nodeIter();
+	public Iterator<Node> nodeIter();
 	/**
 	 * This method returns an Iterator for all the edges in this graph.
 	 * Note: if any of the edges going out of this node were changed since the iterator was constructed - a RuntimeException should be thrown.
 	 * @return Iterator<EdgeData>
 	 */
-	public Iterator<EdgeData> edgeIter();
+	public Iterator<Edge> edgeIter();
 	/**
 	 * This method returns an Iterator for edges getting out of the given node (all the edges starting (source) at the given node).
 	 * Note: if the graph was changed since the iterator was constructed - a RuntimeException should be thrown.

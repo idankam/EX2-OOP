@@ -1,49 +1,93 @@
-package api;
+package implementations;
+import api.*;
+import implementations.DWG;
 
+import java.util.Iterator;
 import java.util.List;
-/**
- * This interface represents a Directed (positive) Weighted Graph Theory Algorithms including:
- * 0. clone(); (copy)
- * 1. init(graph);
- * 2. isConnected(); // strongly (all ordered pais connected)
- * 3. double shortestPathDist(int src, int dest);
- * 4. List<NodeData> shortestPath(int src, int dest);
- * 5. NodeData center(); // finds the NodeData which minimizes the max distance to all the other nodes.
- *                       // Assuming the graph isConnected, elese return null. See: https://en.wikipedia.org/wiki/Graph_center
- * 6. List<NodeData> tsp(List<NodeData> cities); // computes a list of consecutive nodes which go over all the nodes in cities.
- *                                               // See: https://en.wikipedia.org/wiki/Travelling_salesman_problem
- * 7. save(file); // JSON file
- * 8. load(file); // JSON file
- *
- *
- * @author boaz.benmoshe
- *
- */
-public interface DirectedWeightedGraphAlgorithms {
 
+public class DWGAlgorithms {
+
+    private DWG graph;
 
     /**
      * Inits the graph on which this set of algorithms operates on.
      * @param g
      */
-    public void init(DirectedWeightedGraph g);
+    public void init(DirectedWeightedGraph g){
+        this.graph= (DWG) g;
+    }
 
     /**
      * Returns the underlying graph of which this class works.
      * @return
      */
-    public DirectedWeightedGraph getGraph();
+    public DirectedWeightedGraph getGraph(){
+        return graph;
+    }
+
     /**
      * Computes a deep copy of this weighted graph.
      * @return
      */
-    public DirectedWeightedGraph copy();
+    public DirectedWeightedGraph copy(){
+        return this.graph.copy();
+    }
+
+    private static void DFS(DWG graph, int node)
+    {
+        int WHITE = 0, GREY = 1, BLACK = 2;
+        // mark current node as visited
+        graph.getNodes().get(node).setTag(GREY);
+
+        // do for every edge (v, u)
+        for (Iterator<EdgeData> it = graph.edgeIter(node); it.hasNext(); ) {
+            Edge e = (Edge) it.next();
+            if (graph.getNode(e.getDest()).getTag() == WHITE){
+                DFS(graph, e.getDest());
+            }
+        }
+        graph.getNodes().get(node).setTag(GREY);
+    }
+
+
     /**
      * Returns true if and only if (iff) there is a valid path from each node to each
      * other node. NOTE: assume directional graph (all n*(n-1) ordered pairs).
      * @return
      */
-    public boolean isConnected();
+    public boolean isConnected(){
+        this.graph.colorWhite();
+
+        if (this.graph.nodeSize()<2){
+            return true;
+        }
+
+        Iterator iter = graph.nodeIter();
+        int key = ((Node)iter.next()).getKey();
+
+        DFS(graph, (key));
+        while (iter.hasNext()){
+            iter.next();
+            if(((Node)iter).getTag()!=DWG.BLACK){
+                return false;
+            }
+        }
+
+        DWG T_graph = this.graph.transpose();
+        T_graph.colorWhite();
+
+
+        DFS(T_graph, key);
+        iter = T_graph.nodeIter();
+        while (iter.hasNext()){
+            iter.next();
+            if(((Node)iter).getTag()!=DWG.BLACK){
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Computes the length of the shortest path between src to dest
      * Note: if no such path --> returns -1
@@ -69,12 +113,12 @@ public interface DirectedWeightedGraphAlgorithms {
      * @return the Node data to which the max shortest path to all the other nodes is minimized.
      */
     public NodeData center();
-   /**
-    * Computes a list of consecutive nodes which go over all the nodes in cities.
-    * the sum of the weights of all the consecutive (pairs) of nodes (directed) is the "cost" of the solution -
-    * the lower the better.
-    * See: https://en.wikipedia.org/wiki/Travelling_salesman_problem
-    */
+    /**
+     * Computes a list of consecutive nodes which go over all the nodes in cities.
+     * the sum of the weights of all the consecutive (pairs) of nodes (directed) is the "cost" of the solution -
+     * the lower the better.
+     * See: https://en.wikipedia.org/wiki/Travelling_salesman_problem
+     */
     List<NodeData> tsp(List<NodeData> cities);
     /**
      * Saves this weighted (directed) graph to the given
@@ -94,3 +138,4 @@ public interface DirectedWeightedGraphAlgorithms {
      */
     public boolean load(String file);
 }
+
