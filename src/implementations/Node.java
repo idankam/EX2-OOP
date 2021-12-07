@@ -4,21 +4,28 @@ import api.*;
 
 import java.util.HashMap;
 
-public class Node implements NodeData {
+public class Node implements NodeData, Comparable<Node>{
 
-    private int _key;
+    private int id;
     private HashMap<Integer, Edge> _edges;
-    private GeoLoc _location;
+    private GeoLoc pos;
     private int _tag;
     private String _info = "";
+    private double _weight;
 
-    public Node(int key, HashMap<Integer, Edge> edges, GeoLoc loc){
-        this._key = key;
+    public Node(int id, HashMap<Integer, Edge> edges, GeoLoc pos){
+        this.id = id;
         this._edges = edges;
-        this._location = loc;
-        this._tag = Integer.parseInt(null);
+        this.pos = pos;
+        this._tag = -1;
     }
 
+    public Node(int id, GeoLoc pos){
+        this.id = id;
+        this._edges = new HashMap<Integer, Edge>();
+        this.pos = pos;
+        this._tag = -1;
+    }
 
 
     /**
@@ -26,13 +33,13 @@ public class Node implements NodeData {
      * @return
      */
     public int getKey(){
-        return _key;
+        return id;
     }
     /** Returns the location of this node, if none return null.
      * @return
      */
     public GeoLocation getLocation(){
-        return _location;
+        return pos;
     }
 
     /** Allows changing this node's location.
@@ -40,7 +47,7 @@ public class Node implements NodeData {
      */
     @Override
     public void setLocation(GeoLocation p) {
-        this._location = (GeoLoc) p;
+        this.pos = (GeoLoc) p;
     }
 
     /**
@@ -48,14 +55,14 @@ public class Node implements NodeData {
      * @return
      */
     public double getWeight(){
-        return 0.0; ///////////////////// complete!!!!!!!
+        return this._weight;
     }
     /**
      * Allows changing this node's weight.
      * @param w - the new weight
      */
     public void setWeight(double w){
-        return; ///////////////////// complete!!!!!!!
+        this._weight = w;
     }
     /**
      * Returns the remark (meta data) associated with this node.
@@ -97,7 +104,7 @@ public class Node implements NodeData {
     }
 
     public void setEdge(int dst, double weight){
-        Edge new_edge = new Edge(this._key, dst, weight);
+        Edge new_edge = new Edge(this.id, dst, weight);
         this._edges.put(dst, new_edge);
     }
 
@@ -111,7 +118,7 @@ public class Node implements NodeData {
             edges.put(key, _edges.get(key).copy());
         }
 
-        Node node_copy = new Node(this._key, edges, this._location.copy());
+        Node node_copy = new Node(this.id, edges, this.pos.copy());
         node_copy.setInfo(this._info);
         node_copy.setTag(this._tag);
 
@@ -120,6 +127,50 @@ public class Node implements NodeData {
 
     public void cleanEdges(){
         this._edges.clear();
+    }
+
+    /**
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     *
+     * <p>The implementor must ensure
+     * {@code sgn(x.compareTo(y)) == -sgn(y.compareTo(x))}
+     * for all {@code x} and {@code y}.  (This
+     * implies that {@code x.compareTo(y)} must throw an exception iff
+     * {@code y.compareTo(x)} throws an exception.)
+     *
+     * <p>The implementor must also ensure that the relation is transitive:
+     * {@code (x.compareTo(y) > 0 && y.compareTo(z) > 0)} implies
+     * {@code x.compareTo(z) > 0}.
+     *
+     * <p>Finally, the implementor must ensure that {@code x.compareTo(y)==0}
+     * implies that {@code sgn(x.compareTo(z)) == sgn(y.compareTo(z))}, for
+     * all {@code z}.
+     *
+     * <p>It is strongly recommended, but <i>not</i> strictly required that
+     * {@code (x.compareTo(y)==0) == (x.equals(y))}.  Generally speaking, any
+     * class that implements the {@code Comparable} interface and violates
+     * this condition should clearly indicate this fact.  The recommended
+     * language is "Note: this class has a natural ordering that is
+     * inconsistent with equals."
+     *
+     * <p>In the foregoing description, the notation
+     * {@code sgn(}<i>expression</i>{@code )} designates the mathematical
+     * <i>signum</i> function, which is defined to return one of {@code -1},
+     * {@code 0}, or {@code 1} according to whether the value of
+     * <i>expression</i> is negative, zero, or positive, respectively.
+     *
+     * @param other the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     * @throws NullPointerException if the specified object is null
+     * @throws ClassCastException   if the specified object's type prevents it
+     *                              from being compared to this object.
+     */
+    @Override
+    public int compareTo(Node other) {
+        return Double.compare(this.getWeight(), other.getWeight());
     }
 }
 

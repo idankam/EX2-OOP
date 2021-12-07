@@ -4,17 +4,17 @@ import api.EdgeData;
 
 public class Edge implements EdgeData {
 
-    private int _src;
-    private int _dst;
-    private double _weight;
+    private int src;
+    private int dest;
+    private double w;
     private int _tag;
     private String _info = "";
 
-    public Edge(int src, int dst, double weight){
-        this._src = src;
-        this._dst = dst;
-        this._weight = weight;
-        this._tag = Integer.parseInt(null);
+    public Edge(int src, int dest, double w){
+        this.src = src;
+        this.dest = dest;
+        this.w = w;
+        this._tag = -1;
 
     }
 
@@ -24,20 +24,20 @@ public class Edge implements EdgeData {
      * @return
      */
     public int getSrc(){
-        return _src;
+        return src;
     }
     /**
      * The id of the destination node of this edge
      * @return
      */
     public int getDest(){
-        return _dst;
+        return dest;
     }
     /**
      * @return the weight of this edge (positive value).
      */
     public double getWeight(){
-        return _weight;
+        return w;
     }
     /**
      * Returns the remark (meta data) associated with this edge.
@@ -71,7 +71,7 @@ public class Edge implements EdgeData {
     }
 
     public Edge copy(){
-        Edge edge_copy = new Edge(this._src, this._dst, this._weight);
+        Edge edge_copy = new Edge(this.src, this.dest, this.w);
         edge_copy.setTag(this._tag);
         edge_copy.setInfo(this._info);
         return edge_copy;

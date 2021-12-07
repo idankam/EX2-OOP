@@ -1,10 +1,13 @@
 package implementations;
+
 import api.DirectedWeightedGraph;
 import api.EdgeData;
 import api.NodeData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * This interface represents a Directional Weighted Graph,
@@ -18,12 +21,12 @@ import java.util.Iterator;
 public class DWG implements DirectedWeightedGraph {
 
     public static final int WHITE = 0, GREY = 1, BLACK = 2;
-    private HashMap<Integer, Node> nodes;
-    private HashMap<String, Edge> edges;
+    private HashMap<Integer, Node> Nodes;
+    private HashMap<String, Edge> Edges;
 
     public DWG(){
-        this.nodes = new HashMap<>();
-        this.edges = new HashMap<>();
+        this.Nodes = new HashMap<>();
+        this.Edges = new HashMap<>();
     }
 
     /**
@@ -32,7 +35,7 @@ public class DWG implements DirectedWeightedGraph {
      * @return the node_data by the node_id, null if none.
      */
     public NodeData getNode(int key){
-        return this.nodes.get(key);
+        return this.Nodes.get(key);
     }
     /**
      * returns the data of the edge (src,dest), null if none.
@@ -42,7 +45,7 @@ public class DWG implements DirectedWeightedGraph {
      * @return
      */
     public EdgeData getEdge(int src, int dest){
-        return this.nodes.get(src).getEdge(dest);
+        return this.Nodes.get(src).getEdge(dest);
     }
     /**
      * adds a new node to the graph with the given node_data.
@@ -50,7 +53,7 @@ public class DWG implements DirectedWeightedGraph {
      * @param n
      */
     public void addNode(NodeData n){
-        this.nodes.put(n.getKey(), (Node) n);
+        this.Nodes.put(n.getKey(), (Node) n);
     }
     /**
      * Connects an edge with weight w between node src to node dest.
@@ -62,8 +65,8 @@ public class DWG implements DirectedWeightedGraph {
     public void connect(int src, int dest, double w){
         Edge new_edge = new Edge(src, dest, w);
         String edge_name = src + "," + dest;
-        edges.put(edge_name, new_edge);
-        this.nodes.get(src).setEdge(dest, w);
+        Edges.put(edge_name, new_edge);
+        this.Nodes.get(src).setEdge(dest, w);
     }
     /**
      * This method returns an Iterator for the
@@ -72,7 +75,9 @@ public class DWG implements DirectedWeightedGraph {
      * @return Iterator<node_data>
      */
     public Iterator<Node> nodeIter(){
-        return (Iterator<Node>) this.nodes.values();
+        List<Node> l  = new ArrayList<Node>( this.Nodes.values() );
+        return l.iterator();
+        // return (Iterator<Node>) this.Nodes.values();
     }
     /**
      * This method returns an Iterator for all the edges in this graph.
@@ -80,7 +85,9 @@ public class DWG implements DirectedWeightedGraph {
      * @return Iterator<EdgeData>
      */
     public Iterator<Edge> edgeIter(){
-        return (Iterator<Edge>) edges.values();
+        List<Edge> l  = new ArrayList<Edge>( this.Edges.values() );
+        return l.iterator();
+        //return (Iterator<Edge>) Edges.values();
     }
 
 
@@ -90,7 +97,9 @@ public class DWG implements DirectedWeightedGraph {
      * @return Iterator<EdgeData>
      */
     public Iterator<EdgeData> edgeIter(int node_id){
-        return (Iterator<EdgeData>) this.nodes.get(node_id).getEdges().values();
+        List<EdgeData> l  = new ArrayList<>(this.Nodes.get(node_id).getEdges().values());
+        return l.iterator();
+        //return (Iterator<EdgeData>) this.Nodes.get(node_id).getEdges().values();
     }
 
     /**
@@ -101,13 +110,13 @@ public class DWG implements DirectedWeightedGraph {
      * @param key
      */
     public NodeData removeNode(int key){ ////// check what is O(k)
-        Node removedNode = this.nodes.remove(key);
-        for(String name : this.edges.keySet()){
+        Node removedNode = this.Nodes.remove(key);
+        for(String name : this.Edges.keySet()){
             if(Integer.parseInt(name.split(",")[0]) == key || (Integer.parseInt(name.split(",")[1])) == key){
-                edges.remove(name);
+                Edges.remove(name);
             }
         }
-        for (Node node: nodes.values()){
+        for (Node node: Nodes.values()){
             if (node.getEdges().containsKey(key)){
                 node.removeEdge(key);
             }
@@ -122,15 +131,15 @@ public class DWG implements DirectedWeightedGraph {
      * @return the data of the removed edge (null if none).
      */
     public EdgeData removeEdge(int src, int dest){
-        edges.remove(src+","+dest);
-        return this.nodes.get(src).removeEdge(dest);
+        Edges.remove(src+","+dest);
+        return this.Nodes.get(src).removeEdge(dest);
     }
     /** Returns the number of vertices (nodes) in the graph.
      * Note: this method should run in O(1) time.
      * @return
      */
     public int nodeSize(){
-        return this.nodes.size();
+        return this.Nodes.size();
     }
     /**
      * Returns the number of edges (assume directional graph).
@@ -138,7 +147,7 @@ public class DWG implements DirectedWeightedGraph {
      * @return
      */
     public int edgeSize(){
-        return edges.size();
+        return Edges.size();
     }
     /**
      * Returns the Mode Count - for testing changes in the graph.
@@ -152,21 +161,21 @@ public class DWG implements DirectedWeightedGraph {
     }
 
     private void setEdges(HashMap<String, Edge> edges){
-        this.edges = edges;
+        this.Edges = edges;
     }
 
     private void setNodes(HashMap<Integer, Node> nodes){
-        this.nodes = nodes;
+        this.Nodes = nodes;
     }
 
     public DWG copy(){
         HashMap<Integer, Node> nodes_copy = new HashMap<>();
         HashMap<String, Edge> edges_copy = new HashMap<>();
 
-        for (Integer key: this.nodes.keySet()){
+        for (Integer key: this.Nodes.keySet()){
             nodes_copy.put(key, nodes_copy.get(key).copy());
         }
-        for (String key: this.edges.keySet()){
+        for (String key: this.Edges.keySet()){
             edges_copy.put(key, edges_copy.get(key).copy());
         }
 
@@ -178,7 +187,7 @@ public class DWG implements DirectedWeightedGraph {
     }
 
     public HashMap<Integer, Node> getNodes(){
-        return this.nodes;
+        return this.Nodes;
     }
 
     public void colorWhite(){
