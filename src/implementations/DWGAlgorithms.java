@@ -4,11 +4,11 @@ import api.DirectedWeightedGraph;
 import api.EdgeData;
 import api.NodeData;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.stream.JsonReader;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 
 public class DWGAlgorithms {
@@ -161,14 +161,18 @@ private HashMap<Integer, Integer> dijkstra(int src){
     }
 
     private List<NodeData> getPath(HashMap<Integer, Integer> pointers, int src, int dest) {
-        List<NodeData> path = new ArrayList<>();
-        int previous = dest;
-        while(previous != src){
-            path.add(0, this.graph.getNode(previous));
-            previous = pointers.get(previous);
+        try {
+            List<NodeData> path = new ArrayList<>();
+            int previous = dest;
+            while (previous != src) {
+                path.add(0, this.graph.getNode(previous));
+                previous = pointers.get(previous);
+            }
+            path.add(0, this.graph.getNode(src));
+            return path;
+        } catch (Exception e){
+            return null;
         }
-        path.add(0, this.graph.getNode(src));
-        return path;
     }
 
     /**
@@ -213,92 +217,94 @@ private HashMap<Integer, Integer> dijkstra(int src){
      * @param cities
      */
     public List<Node> tsp(List<NodeData> cities){
-
-        boolean flag = true;
-        for ( NodeData node : cities){
-            try{
-                Node tmp = (Node) this.graph.getNode(node.getKey());
-            }
-            catch(Exception e){
-                flag = false;
-                break;
-            }
-        }
-        if(!flag){
-            System.err.println("There is no such key! try again");
-            return null;
-        }
-
-        List<Node> answer = new ArrayList<>();
-
-        DWG transpose_graph = this.graph.transpose();
-        DWGAlgorithms original = this;
-        DWGAlgorithms transpose = new DWGAlgorithms();
-        transpose.init(transpose_graph);
-
-        answer.add((Node) cities.get(0));
-        cities.remove(0);
-        while(cities.size()>0){
-            HashMap<Integer, Integer> dij_original_pointers = original.dijkstra(answer.get(answer.size()-1).getKey());
-            HashMap<Integer, Integer> dij_transpose_pointers = transpose.dijkstra(answer.get(0).getKey());
-
-            double end_min_weight = Double.MAX_VALUE;
-            int end_min_weight_key_node = -1;
-            Node node_to_add_at_end = null;
-            for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
-                Node cities_node = (Node) it.next();
-                Node node = (Node) original.graph.getNode(cities_node.getKey());
-                if(node.getWeight() < end_min_weight){
-                    end_min_weight = node.getWeight();
-                    end_min_weight_key_node = node.getKey();
-                    node_to_add_at_end = cities_node;
+        try {
+            boolean flag = true;
+            for (NodeData node : cities) {
+                try {
+                    Node tmp = (Node) this.graph.getNode(node.getKey());
+                } catch (Exception e) {
+                    flag = false;
+                    break;
                 }
             }
-
-            double start_min_weight = Double.MAX_VALUE;
-            int start_min_weight_key_node = -1;
-            Node node_to_add_at_start = null;
-            for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
-                Node cities_node = (Node) it.next();
-                Node node = (Node) transpose.graph.getNode(cities_node.getKey());
-                if(node.getWeight() < start_min_weight){
-                    start_min_weight = node.getWeight();
-                    start_min_weight_key_node = node.getKey();
-                    node_to_add_at_start = cities_node;
-                }
+            if (!flag) {
+                System.err.println("There is no such key! try again");
+                return null;
             }
 
-            if (end_min_weight < start_min_weight){
-                List<NodeData> tmp_list = original.getPath(dij_original_pointers, answer.get(answer.size()-1).getKey(), end_min_weight_key_node);
-                tmp_list.remove(0);
-                for (Iterator<NodeData> it = tmp_list.iterator(); it.hasNext(); ) {
-                    Node tmp_node = (Node) it.next();
-                    answer.add(tmp_node);
+            List<Node> answer = new ArrayList<>();
 
-                }
-                cities.remove(node_to_add_at_end);
-            }
-            else {
-                List<NodeData> tmp_list = transpose.getPath(dij_transpose_pointers, answer.get(0).getKey(), start_min_weight_key_node);
-                tmp_list.remove(0);
-                for (int i = 0; i < tmp_list.size(); i++) {
-                    answer.add(0, (Node) original.graph.getNode(tmp_list.get(i).getKey()));
-                }
-                cities.remove(node_to_add_at_start);
-            }
+            DWG transpose_graph = this.graph.transpose();
+            DWGAlgorithms original = this;
+            DWGAlgorithms transpose = new DWGAlgorithms();
+            transpose.init(transpose_graph);
 
-            for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
-                Node tmp_city_node = (Node) it.next();
-                for (Iterator<Node> iter = answer.iterator(); iter.hasNext(); ) {
-                    NodeData tmp_ans_node = iter.next();
-                    if(tmp_ans_node.getKey() == tmp_city_node.getKey()){
-                        cities.remove(tmp_city_node);
+            answer.add((Node) cities.get(0));
+            cities.remove(0);
+            while (cities.size() > 0) {
+                HashMap<Integer, Integer> dij_original_pointers = original.dijkstra(answer.get(answer.size() - 1).getKey());
+                HashMap<Integer, Integer> dij_transpose_pointers = transpose.dijkstra(answer.get(0).getKey());
+
+                double end_min_weight = Double.MAX_VALUE;
+                int end_min_weight_key_node = -1;
+                Node node_to_add_at_end = null;
+                for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
+                    Node cities_node = (Node) it.next();
+                    Node node = (Node) original.graph.getNode(cities_node.getKey());
+                    if (node.getWeight() < end_min_weight) {
+                        end_min_weight = node.getWeight();
+                        end_min_weight_key_node = node.getKey();
+                        node_to_add_at_end = cities_node;
+                    }
+                }
+
+                double start_min_weight = Double.MAX_VALUE;
+                int start_min_weight_key_node = -1;
+                Node node_to_add_at_start = null;
+                for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
+                    Node cities_node = (Node) it.next();
+                    Node node = (Node) transpose.graph.getNode(cities_node.getKey());
+                    if (node.getWeight() < start_min_weight) {
+                        start_min_weight = node.getWeight();
+                        start_min_weight_key_node = node.getKey();
+                        node_to_add_at_start = cities_node;
+                    }
+                }
+
+                if (end_min_weight < start_min_weight) {
+                    List<NodeData> tmp_list = original.getPath(dij_original_pointers, answer.get(answer.size() - 1).getKey(), end_min_weight_key_node);
+                    tmp_list.remove(0);
+                    for (Iterator<NodeData> it = tmp_list.iterator(); it.hasNext(); ) {
+                        Node tmp_node = (Node) it.next();
+                        answer.add(tmp_node);
+
+                    }
+                    cities.remove(node_to_add_at_end);
+                } else {
+                    List<NodeData> tmp_list = transpose.getPath(dij_transpose_pointers, answer.get(0).getKey(), start_min_weight_key_node);
+                    tmp_list.remove(0);
+                    for (int i = 0; i < tmp_list.size(); i++) {
+                        answer.add(0, (Node) original.graph.getNode(tmp_list.get(i).getKey()));
+                    }
+                    cities.remove(node_to_add_at_start);
+                }
+
+                for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
+                    Node tmp_city_node = (Node) it.next();
+                    for (Iterator<Node> iter = answer.iterator(); iter.hasNext(); ) {
+                        NodeData tmp_ans_node = iter.next();
+                        if (tmp_ans_node.getKey() == tmp_city_node.getKey()) {
+                            cities.remove(tmp_city_node);
+                        }
                     }
                 }
             }
-        }
 
-    return answer;
+            return answer;
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
 
@@ -308,8 +314,47 @@ private HashMap<Integer, Integer> dijkstra(int src){
      * @param file - the file name (may include a relative path).
      * @return true - iff the file was successfully saved
      */
-    public boolean save(String file){
-        return true; ///completeeeeeeeee
+    public boolean save(String file) {
+
+        try {
+            Container graph_to_save = new Container();
+            ArrayList<Object> nodes = new ArrayList<>();
+            ArrayList<Object> edges = new ArrayList<>();
+
+            for (Iterator<Node> it = this.graph.nodeIter(); it.hasNext(); ) {
+                Node node = it.next();
+                LinkedTreeMap tmp = new LinkedTreeMap();
+                String loc = node.getLocation().x() + "," + node.getLocation().y() + "," + node.getLocation().z();
+                tmp.put("pos", loc);
+                tmp.put("id", node.getKey());
+                nodes.add(tmp);
+            }
+            for (Iterator<Edge> it = this.graph.edgeIter(); it.hasNext(); ) {
+                Edge edge = it.next();
+                LinkedTreeMap tmp = new LinkedTreeMap();
+
+                tmp.put("src", edge.getSrc());
+                tmp.put("w", edge.getWeight());
+                tmp.put("dest", edge.getDest());
+
+                edges.add(tmp);
+            }
+
+            graph_to_save.setNodes(nodes.toArray(new Object[0]));
+            graph_to_save.setEdges(edges.toArray(new Object[0]));
+
+            Writer writer = new FileWriter(file);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(graph_to_save, writer);
+            writer.flush(); //flush data to file   <---
+            writer.close(); //close write          <---
+            return true;
+        }
+        catch (IOException e){
+            System.err.println("file cannot be created");
+            return false;
+        }
+
     }
 
     /**
@@ -350,7 +395,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         DWGAlgorithms a = new DWGAlgorithms();
         a.load("data/G1.json");
@@ -396,16 +441,18 @@ private HashMap<Integer, Integer> dijkstra(int src){
 //        for (NodeData n : test.tsp(l)){
 //            System.out.println(n.getKey());
 //        }
-        List<NodeData> l = new ArrayList<>();
-        l.add((Node) a.graph.getNode(4));
-        l.add((Node) a.graph.getNode(5));
-        l.add((Node) a.graph.getNode(12));
-        l.add((Node) a.graph.getNode(1));
-        l.add((Node) a.graph.getNode(3));
-        l.add((Node) a.graph.getNode(15));
-        for (NodeData n : a.tsp(l)){
-            System.out.println(n.getKey());
-        }
+//        List<NodeData> l = new ArrayList<>();
+//        l.add((Node) a.graph.getNode(4));
+//        l.add((Node) a.graph.getNode(5));
+//        l.add((Node) a.graph.getNode(12));
+//        l.add((Node) a.graph.getNode(1));
+//        l.add((Node) a.graph.getNode(3));
+//        l.add((Node) a.graph.getNode(15));
+//        for (NodeData n : a.tsp(l)){
+//            System.out.println(n.getKey());
+//        }
+
+        b.getGraph().removeNode(2);
     }
 
     public void init() {

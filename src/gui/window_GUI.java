@@ -6,6 +6,7 @@ import implementations.DWGAlgorithms;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class window_GUI extends JFrame {
 
@@ -15,6 +16,8 @@ public class window_GUI extends JFrame {
     private Edges_UI edges_ui;
     private Menu_GUI menu;
     public boolean is_initialized = false;
+    public ArrayList<String> unique_edges = null;
+    public ArrayList<Integer> unique_nodes = new ArrayList<>();
 
 //    public static final int HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2);
 //    public static final int WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2);

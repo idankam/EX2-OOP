@@ -37,6 +37,11 @@ public class Nodes_UI extends JComponent {
     private void getCoordBounds() {
         iterator = graph.nodeIter();
 
+        Xmax = Double.MIN_VALUE;
+        Ymax = Double.MIN_VALUE;
+        Xmin = Double.MAX_VALUE;
+        Ymin = Double.MAX_VALUE;
+
         while (iterator.hasNext()) {
             NodeData node = iterator.next();
 
@@ -78,7 +83,14 @@ public class Nodes_UI extends JComponent {
             int scaled_x = (int) ((x / (Xmax - Xmin)) * WIDTH * 0.8) + (int) (0.08 * WIDTH);
             g2d.setPaint(Color.white);
             g2d.fillOval(scaled_x,scaled_y , 18, 18);
-            g2d.setPaint(Color.RED);
+
+            // changed
+            if(graph_ui.unique_nodes!=null && graph_ui.unique_nodes.contains(node.getKey())){
+                g2d.setPaint(Color.GREEN);
+                g2d.fillOval(scaled_x,scaled_y , 18, 18);
+            }
+            else{g2d.setPaint(Color.RED);}
+
             g2d.drawOval(scaled_x,scaled_y , 18, 18);
             g2d.setPaint(Color.BLACK);
             g2d.drawString(String.valueOf(node.getKey()), scaled_x+3,scaled_y+14);

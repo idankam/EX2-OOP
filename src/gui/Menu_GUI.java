@@ -1,12 +1,14 @@
 package gui;
 
 import implementations.DWGAlgorithms;
+import implementations.Node;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Menu_GUI implements ActionListener {
 
@@ -84,12 +86,9 @@ public class Menu_GUI implements ActionListener {
         TempFrame_UI temp = new TempFrame_UI(frame);
 
         if (source == save) { // save
-            temp.setTitle("Save");
-            JLabel l = new JLabel("Saved at \"saved_graphs/SavedGraph.json\"");
-            l.setBounds(30, 50, 600, 60);
-            temp.setBounds(100, 100, 400, 200);
-            temp.add(l);
-            graph_algo.save("SavedGraph.json");
+            remove_unique();
+            temp.setTitle("Save To File");
+            temp.save_to_file();
             temp.setVisible(true);
         }
         if (source == load){ // load
@@ -114,32 +113,43 @@ public class Menu_GUI implements ActionListener {
                 graph_algo.load(file_path);
                 frame.setAlgo(graph_algo);
 
-                Nodes_UI nodes = new Nodes_UI(graph_algo, frame);
-                Edges_UI edges = new Edges_UI(graph_algo, frame);
-                frame.setNodes_ui(nodes);
-                frame.setEdges_ui(edges);
-                frame.add(nodes, BorderLayout.CENTER);
-                frame.add(edges, BorderLayout.CENTER);
-                frame.setVisible(true);
-                frame.setResizable(true);
+                frame.unique_nodes.clear();
+                show_graph();
             }
 
         }
 
-        if (source == add_node) // add node
-            System.out.println("TEST");
+        if (source == add_node) { // add node
+            temp.setTitle("Add Node");
+            temp.add_node();
+            temp.setVisible(true);
+        }
 
-        if (source == add_edge) // add edge
-            System.out.println("TEST");
+        if (source == add_edge){ // add edge
+            temp.setTitle("Add Edge");
+            temp.add_edge();
+            temp.setVisible(true);
+        }
+
 
         if (source == delete_node) // remove node
-            System.out.println("TEST");
+        {
+            remove_unique();
+            temp.setTitle("Remove Node");
+            temp.remove_node();
+            temp.setVisible(true);
+        }
 
         if (source == delete_edge) // remove edge
-            System.out.println("TEST");
-
+        {
+            remove_unique();
+            temp.setTitle("Remove Edge");
+            temp.remove_edge();
+            temp.setVisible(true);
+        }
 
         if (source == is_connected_algo) { // connectivity
+            remove_unique();
             temp.setTitle("Is Connected");
             JLabel l = new JLabel(graph_algo.isConnected() ? "TRUE" : "FALSE");
             l.setBounds(130, 60, 100, 30);
@@ -149,6 +159,7 @@ public class Menu_GUI implements ActionListener {
 
         if (source == shortest_path_weight_algo) // shortest path
         {
+            remove_unique();
             temp.setTitle("Shortest Path Weight");
             temp.shortestPathWeight();
             temp.setVisible(true);
@@ -163,8 +174,20 @@ public class Menu_GUI implements ActionListener {
 
         if (source == find_center_algo) { // center
             temp.setTitle("Center");
-            JLabel l = new JLabel("Center is: " + graph_algo.center().getKey());
-            l.setBounds(110, 60, 100, 30);
+            Node center_node = (Node) graph_algo.center();
+            JLabel l;
+            if (center_node!=null){
+
+                ArrayList<Integer> unique_n = new ArrayList<>();
+                unique_n.add(center_node.getKey());
+                frame.unique_nodes = unique_n;
+                show_graph();
+
+                l = new JLabel("Center is: " + center_node.getKey());
+            }else{
+                l = new JLabel("<html>the graph is not connected!</br>    there is no center in this graph</html>");
+            }
+            l.setBounds(50, 60, 200, 50);
             temp.add(l);
             temp.setVisible(true);
         }
@@ -174,5 +197,21 @@ public class Menu_GUI implements ActionListener {
             temp.tsp();
             temp.setVisible(true);
         }
+    }
+
+    private void show_graph() {
+        Nodes_UI nodes = new Nodes_UI(graph_algo, frame);
+        Edges_UI edges = new Edges_UI(graph_algo, frame);
+        frame.setNodes_ui(nodes);
+        frame.setEdges_ui(edges);
+        frame.add(nodes, BorderLayout.CENTER);
+        frame.add(edges, BorderLayout.CENTER);
+        frame.setVisible(true);
+        frame.setResizable(true);
+    }
+
+    private void remove_unique(){
+        frame.unique_nodes.clear();
+        show_graph();
     }
 }

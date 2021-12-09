@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Edges_UI extends JComponent {
@@ -48,6 +49,14 @@ public class Edges_UI extends JComponent {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(Color.BLACK);
 
+        ArrayList<String> unique_edges = new ArrayList<>();
+        if(graph_ui.unique_nodes.size()>1){
+            for(int i =0 ; i <graph_ui.unique_nodes.size()-1; i++){
+                unique_edges.add(graph_ui.unique_nodes.get(i) + "," + graph_ui.unique_nodes.get(i+1));
+            }
+        }
+
+
         iterator = graph.edgeIter();
         while (iterator.hasNext()) {
             EdgeData edge = iterator.next();
@@ -62,23 +71,28 @@ public class Edges_UI extends JComponent {
             y1 = (int) ((y1 / (Ymax - Ymin)) * HEIGHT * 0.8) + 10;
             y2 = (int) ((y2 / (Ymax - Ymin)) * HEIGHT * 0.8) + 10;
 
-            //int m = (int)((y2-y1)/(x2-x1));
-
-            //drawArrowLine(g2d, x1, y1, x2-3, y2-3*m, 6,6);
-            g2d.draw(new Line2D.Double(x1, y1, x2, y2));
-
-            // changeeeeeeeeee
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.DOWN);
-            if(x2>x1){
-                g2d.drawString(String.valueOf(df.format(edge.getWeight())), (int)(x1+x2)/2 +6,(int)(y1+y2)/2 +6);
+            if(unique_edges.contains(edge.getSrc()+","+ edge.getDest()) || unique_edges.contains(edge.getDest()+","+ edge.getSrc())) {
+                g2d.setPaint(Color.GREEN);
+                g2d.draw(new Line2D.Double(x1, y1, x2, y2));
+            }else{
+                g2d.setPaint(Color.BLACK);
+                g2d.draw(new Line2D.Double(x1, y1, x2, y2));
             }
-            else{
-                g2d.drawString(String.valueOf(df.format(edge.getWeight())), (int)(x1+x2)/2 -6,(int)(y1+y2)/2 -6);
+            if(unique_edges.contains(edge.getSrc()+","+ edge.getDest())){
+
+                g2d.setPaint(Color.BLACK);
+                DecimalFormat df = new DecimalFormat("#.##");
+                df.setRoundingMode(RoundingMode.DOWN);
+                if(x2>x1){
+                    g2d.drawString(String.valueOf(df.format(edge.getWeight())), (int)(x1+x2)/2 +6,(int)(y1+y2)/2 +6);
+                }
+                else{
+                    g2d.drawString(String.valueOf(df.format(edge.getWeight())), (int)(x1+x2)/2 -6,(int)(y1+y2)/2 -6);
+                }
             }
 
-//            String weight = String.format("%.2f", edge.getWeight());
-//            g2d.drawString(weight, (int) (x1 + x2) / 2, (int) ((y1 + y2) / 2) + 20);
+
+
         }
 
     }

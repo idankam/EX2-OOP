@@ -111,11 +111,17 @@ public class DWG implements DirectedWeightedGraph {
      */
     public NodeData removeNode(int key){ ////// check what is O(k)
         Node removedNode = this.Nodes.remove(key);
+
+        ArrayList<String> edges_to_remove = new ArrayList<>();
         for(String name : this.Edges.keySet()){
             if(Integer.parseInt(name.split(",")[0]) == key || (Integer.parseInt(name.split(",")[1])) == key){
-                Edges.remove(name);
+                edges_to_remove.add(name);
             }
         }
+        for(String name : edges_to_remove){
+            Edges.remove(name);
+        }
+
         for (Node node: Nodes.values()){
             if (node.getEdges().containsKey(key)){
                 node.removeEdge(key);
