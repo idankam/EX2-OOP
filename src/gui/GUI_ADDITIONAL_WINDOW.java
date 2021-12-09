@@ -204,7 +204,6 @@ public class GUI_ADDITIONAL_WINDOW extends JFrame implements ActionListener {
                 output_text = "<html>One of the keys is not in the graph!</html>";
             }
             else{
-
                 output_text = "";
                 List<NodeData> list_cities = new ArrayList<>();
                 for (String key : keys){
