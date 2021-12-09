@@ -212,7 +212,23 @@ private HashMap<Integer, Integer> dijkstra(int src){
      * @return
      * @param cities
      */
-    public List<Node> tsp(List<Node> cities){
+    public List<Node> tsp(List<NodeData> cities){
+
+        boolean flag = true;
+        for ( NodeData node : cities){
+            try{
+                Node tmp = (Node) this.graph.getNode(node.getKey());
+            }
+            catch(Exception e){
+                flag = false;
+                break;
+            }
+        }
+        if(!flag){
+            System.err.println("There is no such key! try again");
+            return null;
+        }
+
         List<Node> answer = new ArrayList<>();
 
         DWG transpose_graph = this.graph.transpose();
@@ -220,7 +236,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
         DWGAlgorithms transpose = new DWGAlgorithms();
         transpose.init(transpose_graph);
 
-        answer.add(cities.get(0));
+        answer.add((Node) cities.get(0));
         cities.remove(0);
         while(cities.size()>0){
             HashMap<Integer, Integer> dij_original_pointers = original.dijkstra(answer.get(answer.size()-1).getKey());
@@ -229,8 +245,8 @@ private HashMap<Integer, Integer> dijkstra(int src){
             double end_min_weight = Double.MAX_VALUE;
             int end_min_weight_key_node = -1;
             Node node_to_add_at_end = null;
-            for (Iterator<Node> it = cities.iterator(); it.hasNext(); ) {
-                Node cities_node = it.next();
+            for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
+                Node cities_node = (Node) it.next();
                 Node node = (Node) original.graph.getNode(cities_node.getKey());
                 if(node.getWeight() < end_min_weight){
                     end_min_weight = node.getWeight();
@@ -242,7 +258,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
             double start_min_weight = Double.MAX_VALUE;
             int start_min_weight_key_node = -1;
             Node node_to_add_at_start = null;
-            for (Iterator<Node> it = cities.iterator(); it.hasNext(); ) {
+            for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
                 Node cities_node = (Node) it.next();
                 Node node = (Node) transpose.graph.getNode(cities_node.getKey());
                 if(node.getWeight() < start_min_weight){
@@ -271,8 +287,8 @@ private HashMap<Integer, Integer> dijkstra(int src){
                 cities.remove(node_to_add_at_start);
             }
 
-            for (Iterator<Node> it = cities.iterator(); it.hasNext(); ) {
-                Node tmp_city_node = it.next();
+            for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
+                Node tmp_city_node = (Node) it.next();
                 for (Iterator<Node> iter = answer.iterator(); iter.hasNext(); ) {
                     NodeData tmp_ans_node = iter.next();
                     if(tmp_ans_node.getKey() == tmp_city_node.getKey()){
@@ -380,7 +396,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
 //        for (NodeData n : test.tsp(l)){
 //            System.out.println(n.getKey());
 //        }
-        List<Node> l = new ArrayList<Node>();
+        List<NodeData> l = new ArrayList<>();
         l.add((Node) a.graph.getNode(4));
         l.add((Node) a.graph.getNode(5));
         l.add((Node) a.graph.getNode(12));
@@ -390,6 +406,9 @@ private HashMap<Integer, Integer> dijkstra(int src){
         for (NodeData n : a.tsp(l)){
             System.out.println(n.getKey());
         }
+    }
+
+    public void init() {
     }
 }
 
