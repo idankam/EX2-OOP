@@ -41,6 +41,7 @@ public class DWGAlgorithms {
 
     private static void DFS(DWG graph, int node)
     {
+        graph.colorWhite();
         int WHITE = 0, GREY = 1, BLACK = 2;
         // mark current node as visited
         graph.getNodes().get(node).setTag(GREY);
@@ -53,6 +54,28 @@ public class DWGAlgorithms {
             }
         }
         graph.getNodes().get(node).setTag(BLACK);
+    }
+
+    private static void BFS(DWG graph, int node)
+    {
+        int WHITE = 0, GREY = 1, BLACK = 2;
+        // mark current node as visited
+        graph.getNodes().get(node).setTag(GREY);
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(node);
+        while (!queue.isEmpty()){
+            int id = queue.poll();
+            //Node curr_node = (Node) graph.getNode(id);
+            for (Iterator<EdgeData> it = graph.edgeIter(id); it.hasNext(); ) {
+                Edge e = (Edge) it.next();
+                if (graph.getNode(e.getDest()).getTag() == WHITE){
+                    int next_id = e.getDest();
+                    graph.getNode(next_id).setTag(GREY);
+                    queue.add(next_id);
+                }
+            }
+            graph.getNode(id).setTag(BLACK);
+        }
     }
 
 
@@ -71,7 +94,8 @@ public class DWGAlgorithms {
         Iterator iter = graph.nodeIter();
         int key = ((Node)iter.next()).getKey();
 
-        DFS(graph, (key));
+        // BFSS chande
+        BFS(graph, (key));
         while (iter.hasNext()){
             Node tmp_node = (Node) iter.next();
             if((tmp_node.getTag()!=DWG.BLACK)){
@@ -83,7 +107,8 @@ public class DWGAlgorithms {
         T_graph.colorWhite();
 
 
-        DFS(T_graph, key);
+        // BFSS change
+        BFS(T_graph, key);
         iter = T_graph.nodeIter();
         while (iter.hasNext()){
             Node tmp_node = (Node) iter.next();
@@ -452,10 +477,59 @@ private HashMap<Integer, Integer> dijkstra(int src){
 //            System.out.println(n.getKey());
 //        }
 
-        b.getGraph().removeNode(2);
+//        b.getGraph().removeNode(2);
+
+
+
+
+
+//
+//
+//
+//
+//        DWGAlgorithms a1 = new DWGAlgorithms();
+//        DWGAlgorithms a2 = new DWGAlgorithms();
+//        DWGAlgorithms a3 = new DWGAlgorithms();
+//        DWGAlgorithms[] as = new DWGAlgorithms[]{a1, a2, a3};
+//
+//        String[] paths = {"1000Nodes.json", "10000Nodes.json", "100000Nodes.json"};
+//
+//        System.out.println("LOAD TIME:\n");
+//        for (int i = 0; i<as.length; i++){
+//            System.out.print(paths[i]+": ");
+//            long startTime = System.nanoTime();
+//            as[i].load("data/"+paths[i]);
+//            long endTime = System.nanoTime();
+//            long duration = (endTime - startTime);
+//            System.out.println((double)duration/1000000000.0 + " seconds.");
+//        }
+//
+//        System.out.println("\nIS CONNECTED TIME:\n");
+//        for (int i = 0; i<as.length; i++){
+//            System.out.print(paths[i]+": ");
+//            long startTime = System.nanoTime();
+//            as[i].isConnected();
+//            long endTime = System.nanoTime();
+//            long duration = (endTime - startTime);
+//            System.out.println((double)duration/1000000000.0 + " seconds.");
+//        }
+//
+//        System.out.println("\nCENTER TIME:\n");
+//        System.out.println("\nIS CONNECTED TIME:\n");
+//        for (int i = 0; i<as.length; i++){
+//            System.out.print(paths[i]+": ");
+//            long startTime = System.nanoTime();
+//            as[i].center();
+//            long endTime = System.nanoTime();
+//            long duration = (endTime - startTime);
+//            System.out.println((double)duration/1000000000.0 + " seconds.");
+//        }
+
+
+
     }
 
-    public void init() {
-    }
+//    public void init() {
+//    }
 }
 
