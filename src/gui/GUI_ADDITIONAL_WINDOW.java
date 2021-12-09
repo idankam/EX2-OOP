@@ -160,7 +160,6 @@ public class GUI_ADDITIONAL_WINDOW extends JFrame implements ActionListener {
                 ArrayList<Integer> unique_n = new ArrayList<>();
                 for (NodeData node : list){
                     unique_n.add(node.getKey());
-                    System.out.println(node.getKey());
                 }
                 gui_window.unique_nodes = unique_n;
                 update_graph_display();
@@ -214,7 +213,6 @@ public class GUI_ADDITIONAL_WINDOW extends JFrame implements ActionListener {
                     ArrayList<Integer> unique_n = new ArrayList<>();
                     for (Node node : list_ans){
                         unique_n.add(node.getKey());
-                        System.out.println(node.getKey());
                     }
                     gui_window.unique_nodes = unique_n;
                     update_graph_display();
@@ -279,7 +277,6 @@ public class GUI_ADDITIONAL_WINDOW extends JFrame implements ActionListener {
         }
         else if (e.getActionCommand().equals("REMOVE NODE")) {
             int key =  Integer.parseInt(textField.getText());
-            System.out.println(key);
             try{
                 gui_window.getDwg_algorithms().getGraph().removeNode(key);
                 update_graph_display();

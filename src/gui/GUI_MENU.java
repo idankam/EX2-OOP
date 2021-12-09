@@ -5,7 +5,6 @@ import implementations.Node;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -93,7 +92,6 @@ public class GUI_MENU implements ActionListener {
             int r = j.showOpenDialog(null);
             if (r == JFileChooser.APPROVE_OPTION) {
                 String file_path = j.getSelectedFile().getAbsolutePath();
-                System.out.println(file_path);
                 gui_window_frame.getContentPane().removeAll();
                 gui_window_frame.revalidate();
                 gui_window_frame.repaint();
