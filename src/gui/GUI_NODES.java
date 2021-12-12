@@ -1,9 +1,7 @@
 package gui;
 
-import api.NodeData;
-import implementations.DWG;
-import implementations.DWGAlgorithms;
-import implementations.Node;
+import api.*;
+import implementations.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +14,7 @@ public class GUI_NODES extends JComponent {
 
     private final DWGAlgorithms dwgAlgorithms;
     private final DWG dwGraph;
-    private Iterator<Node> nodeIterator;
+    private Iterator<NodeData> nodeIterator;
     private final GUI_WINDOW gui_window;
 
     public static double X_minValue = Double.MAX_VALUE;

@@ -1,9 +1,7 @@
 package gui;
 
-import api.EdgeData;
-import implementations.DWG;
-import implementations.DWGAlgorithms;
-import implementations.Edge;
+import api.*;
+import implementations.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +18,7 @@ public class GUI_EDGES extends JComponent {
 
     private final DWGAlgorithms dwgAlgorithms;
     private final DWG dwGraph;
-    private Iterator<Edge> edgeIterator;
+    private Iterator<EdgeData> edgeIterator;
     private GUI_WINDOW gui_window;
 
     private double X_maxValue = GUI_NODES.X_maxValue;

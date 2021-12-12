@@ -1,5 +1,4 @@
 package api;
-
 import java.util.List;
 /**
  * This interface represents a Directed (positive) Weighted Graph Theory Algorithms including:
@@ -20,8 +19,6 @@ import java.util.List;
  *
  */
 public interface DirectedWeightedGraphAlgorithms {
-
-
     /**
      * Inits the graph on which this set of algorithms operates on.
      * @param g

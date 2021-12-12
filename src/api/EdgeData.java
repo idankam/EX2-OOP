@@ -43,6 +43,3 @@ public interface EdgeData {
 	 */
 	public void setTag(int t);
 }
-
-
-

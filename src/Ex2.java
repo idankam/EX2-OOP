@@ -1,7 +1,6 @@
-import api.DirectedWeightedGraph;
-import api.DirectedWeightedGraphAlgorithms;
 import gui.GUI_WINDOW;
 import implementations.DWGAlgorithms;
+import api.*;
 
 /**
  * This class is the main class for Ex2 - your implementation will be tested using this class.
@@ -38,9 +37,13 @@ public class Ex2 {
             new GUI_WINDOW();
         }
         else{
-            new GUI_WINDOW(json_file);
+            try {
+                new GUI_WINDOW(json_file);
+                }
+            catch (Exception e){
+                new GUI_WINDOW();
+            }
         }
-
     }
 
     public static void main(String[] args) {
@@ -50,6 +53,5 @@ public class Ex2 {
         else{
             runGUI(args[0]);
         }
-
     }
 }

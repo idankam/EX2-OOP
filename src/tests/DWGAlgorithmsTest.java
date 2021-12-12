@@ -1,10 +1,9 @@
 package tests;
 
-import api.NodeData;
 import implementations.DWGAlgorithms;
 import implementations.Node;
 import org.junit.jupiter.api.BeforeAll;
-
+import api.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,7 +94,7 @@ class DWGAlgorithmsTest {
             list_ans.add((Node) c.getGraph().getNode(key));
         }
 
-        List<Node> path = c.tsp(list_cities);
+        List<NodeData> path = c.tsp(list_cities);
 
         assertEquals(path.size(), list_ans.size());
         for (int i = 0; i < path.size(); i++) {

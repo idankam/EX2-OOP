@@ -1,9 +1,7 @@
 package gui;
+import api.*;
+import implementations.*;
 
-
-import api.NodeData;
-import implementations.GeoLoc;
-import implementations.Node;
 
 import javax.swing.*;
 import java.awt.*;
@@ -208,17 +206,17 @@ public class GUI_ADDITIONAL_WINDOW extends JFrame implements ActionListener {
                 for (String key : keys){
                     list_cities.add(gui_window.getDwg_algorithms().getGraph().getNode(Integer.parseInt(key)));
                 }
-                List<Node> list_ans = gui_window.getDwg_algorithms().tsp(list_cities);
+                List<NodeData> list_ans = gui_window.getDwg_algorithms().tsp(list_cities);
                 if(list_ans!=null){
                     ArrayList<Integer> unique_n = new ArrayList<>();
-                    for (Node node : list_ans){
+                    for (NodeData node : list_ans){
                         unique_n.add(node.getKey());
                     }
                     gui_window.unique_nodes = unique_n;
                     update_graph_display();
                     int count = 0;
                     output_text += "<html>";
-                    for (Node node : list_ans){
+                    for (NodeData node : list_ans){
                         if (count != list_ans.size() - 1) {
                             output_text += node.getKey() + " -> ";
                         } else output_text += node.getKey();

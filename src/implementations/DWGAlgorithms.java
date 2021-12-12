@@ -1,17 +1,14 @@
 package implementations;
 
-import api.DirectedWeightedGraph;
-import api.EdgeData;
-import api.NodeData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.stream.JsonReader;
-
+import api.*;
 import java.io.*;
 import java.util.*;
 
-public class DWGAlgorithms {
+public class DWGAlgorithms implements DirectedWeightedGraphAlgorithms{
 
     private DWG graph;
 
@@ -37,23 +34,6 @@ public class DWGAlgorithms {
      */
     public DirectedWeightedGraph copy(){
         return this.graph.copy();
-    }
-
-    private static void DFS(DWG graph, int node)
-    {
-        graph.colorWhite();
-        int WHITE = 0, GREY = 1, BLACK = 2;
-        // mark current node as visited
-        graph.getNodes().get(node).setTag(GREY);
-
-        // do for every edge (v, u)
-        for (Iterator<EdgeData> it = graph.edgeIter(node); it.hasNext(); ) {
-            Edge e = (Edge) it.next();
-            if (graph.getNode(e.getDest()).getTag() == WHITE){
-                DFS(graph, e.getDest());
-            }
-        }
-        graph.getNodes().get(node).setTag(BLACK);
     }
 
     private static void BFS(DWG graph, int node)
@@ -94,7 +74,6 @@ public class DWGAlgorithms {
         Iterator iter = graph.nodeIter();
         int key = ((Node)iter.next()).getKey();
 
-        // BFSS chande
         BFS(graph, (key));
         while (iter.hasNext()){
             Node tmp_node = (Node) iter.next();
@@ -106,8 +85,6 @@ public class DWGAlgorithms {
         DWG T_graph = this.graph.transpose();
         T_graph.colorWhite();
 
-
-        // BFSS change
         BFS(T_graph, key);
         iter = T_graph.nodeIter();
         while (iter.hasNext()){
@@ -121,10 +98,10 @@ public class DWGAlgorithms {
 
 
 private HashMap<Integer, Integer> dijkstra(int src){
-    PriorityQueue<Node> pQueue = new PriorityQueue<>();
+    PriorityQueue<NodeData> pQueue = new PriorityQueue<>();
     HashMap<Integer, Integer> previous_pointer = new HashMap<>();
-    for (Iterator<Node> it = this.graph.nodeIter(); it.hasNext(); ) {
-        Node node = it.next();
+    for (Iterator<NodeData> it = this.graph.nodeIter(); it.hasNext(); ) {
+        NodeData node = it.next();
         if (node.getKey() == src){
             node.setWeight(0.0);
             previous_pointer.put(node.getKey(), null);
@@ -139,7 +116,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
 
     // The main loop
     while (!pQueue.isEmpty()){
-        Node curr_node = pQueue.remove(); // Remove and return best vertex
+        NodeData curr_node = pQueue.remove(); // Remove and return best vertex
         for (Iterator<EdgeData> it = this.graph.edgeIter(curr_node.getKey()); it.hasNext(); )  // only v that are still in Q
         {
             Edge e_neighbour = (Edge) it.next();
@@ -214,11 +191,11 @@ private HashMap<Integer, Integer> dijkstra(int src){
         Node min_max_dist_node = null;
         double best_min_max = Double.MAX_VALUE;
 
-        for (Iterator<Node> it = this.graph.nodeIter(); it.hasNext(); ) {
+        for (Iterator<NodeData> it = this.graph.nodeIter(); it.hasNext(); ) {
             NodeData node = it.next();
             dijkstra(node.getKey());
             double tmp_max = Double.MIN_VALUE;
-            for (Iterator<Node> it2 = this.graph.nodeIter(); it2.hasNext(); ) {
+            for (Iterator<NodeData> it2 = this.graph.nodeIter(); it2.hasNext(); ) {
                 NodeData node_tmp = it2.next();
                 if(node_tmp.getWeight() > tmp_max)
                 tmp_max = node_tmp.getWeight();
@@ -241,7 +218,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
      * @return
      * @param cities
      */
-    public List<Node> tsp(List<NodeData> cities){
+    public List<NodeData> tsp(List<NodeData> cities){
         try {
             boolean flag = true;
             for (NodeData node : cities) {
@@ -257,7 +234,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
                 return null;
             }
 
-            List<Node> answer = new ArrayList<>();
+            List<NodeData> answer = new ArrayList<>();
 
             DWG transpose_graph = this.graph.transpose();
             DWGAlgorithms original = this;
@@ -316,7 +293,7 @@ private HashMap<Integer, Integer> dijkstra(int src){
 
                 for (Iterator<NodeData> it = cities.iterator(); it.hasNext(); ) {
                     Node tmp_city_node = (Node) it.next();
-                    for (Iterator<Node> iter = answer.iterator(); iter.hasNext(); ) {
+                    for (Iterator<NodeData> iter = answer.iterator(); iter.hasNext(); ) {
                         NodeData tmp_ans_node = iter.next();
                         if (tmp_ans_node.getKey() == tmp_city_node.getKey()) {
                             cities.remove(tmp_city_node);
@@ -346,16 +323,16 @@ private HashMap<Integer, Integer> dijkstra(int src){
             ArrayList<Object> nodes = new ArrayList<>();
             ArrayList<Object> edges = new ArrayList<>();
 
-            for (Iterator<Node> it = this.graph.nodeIter(); it.hasNext(); ) {
-                Node node = it.next();
+            for (Iterator<NodeData> it = this.graph.nodeIter(); it.hasNext(); ) {
+                NodeData node = it.next();
                 LinkedTreeMap tmp = new LinkedTreeMap();
                 String loc = node.getLocation().x() + "," + node.getLocation().y() + "," + node.getLocation().z();
                 tmp.put("pos", loc);
                 tmp.put("id", node.getKey());
                 nodes.add(tmp);
             }
-            for (Iterator<Edge> it = this.graph.edgeIter(); it.hasNext(); ) {
-                Edge edge = it.next();
+            for (Iterator<EdgeData> it = this.graph.edgeIter(); it.hasNext(); ) {
+                EdgeData edge = it.next();
                 LinkedTreeMap tmp = new LinkedTreeMap();
 
                 tmp.put("src", edge.getSrc());
@@ -411,7 +388,9 @@ private HashMap<Integer, Integer> dijkstra(int src){
                 double weight = (double)((LinkedTreeMap)o).get("w");
                 graph.connect(src, dest, weight);
             }
+            graph.is_load_now = false;
             this.init(graph);
+
             return true;
         }
         catch(FileNotFoundException e){

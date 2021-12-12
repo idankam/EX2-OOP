@@ -20,10 +20,10 @@ public class Node implements NodeData, Comparable<Node>{
         this._tag = -1;
     }
 
-    public Node(int id, GeoLoc pos){
+    public Node(int id, GeoLocation pos){
         this.id = id;
         this._edges = new HashMap<Integer, Edge>();
-        this.pos = pos;
+        this.pos = (GeoLoc) pos;
         this._tag = -1;
     }
 

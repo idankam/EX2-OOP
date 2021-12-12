@@ -25,6 +25,7 @@ public class GUI_WINDOW extends JFrame {
     }
 
     public GUI_WINDOW(String filename) {
+        setUP();
         this.dwg_algorithms = new DWGAlgorithms();
         this.dwg_algorithms.load(filename);
         this.dwg_graph = (DWG) this.dwg_algorithms.getGraph();

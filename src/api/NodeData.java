@@ -1,7 +1,7 @@
 package api;
 
 /**
- * This interface represents the set of operations applicable on a
+ * This interface represents the set of operations applicable on a 
  * node (vertex) in a (directional) weighted graph.
  * @author boaz.benmoshe
  */
@@ -52,4 +52,3 @@ public interface NodeData {
 	 */
 	public void setTag(int t);
 }
-

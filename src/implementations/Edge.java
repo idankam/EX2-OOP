@@ -1,6 +1,5 @@
 package implementations;
-
-import api.EdgeData;
+import api.*;
 
 public class Edge implements EdgeData {
 

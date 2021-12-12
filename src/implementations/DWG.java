@@ -1,8 +1,6 @@
 package implementations;
 
-import api.DirectedWeightedGraph;
-import api.EdgeData;
-import api.NodeData;
+import api.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +21,8 @@ public class DWG implements DirectedWeightedGraph {
     public static final int WHITE = 0, GREY = 1, BLACK = 2;
     private HashMap<Integer, Node> Nodes;
     private HashMap<String, Edge> Edges;
+    private int changes_counter = 0;
+    public boolean is_load_now = true;
 
     public DWG(){
         this.Nodes = new HashMap<>();
@@ -45,14 +45,18 @@ public class DWG implements DirectedWeightedGraph {
      * @return
      */
     public EdgeData getEdge(int src, int dest){
-        return this.Nodes.get(src).getEdge(dest);
+        return (EdgeData) this.Nodes.get(src).getEdge(dest);
     }
     /**
      * adds a new node to the graph with the given node_data.
      * Note: this method should run in O(1) time.
      * @param n
      */
-    public void addNode(NodeData n){
+    public void addNode(NodeData n) {
+        if (!this.is_load_now)
+        {
+            this.changes_counter++;
+        }
         this.Nodes.put(n.getKey(), (Node) n);
     }
     /**
@@ -63,6 +67,10 @@ public class DWG implements DirectedWeightedGraph {
      * @param w - positive weight representing the cost (aka time, price, etc) between src-->dest.
      */
     public void connect(int src, int dest, double w){
+        if (!this.is_load_now)
+        {
+            this.changes_counter++;
+        }
         Edge new_edge = new Edge(src, dest, w);
         String edge_name = src + "," + dest;
         Edges.put(edge_name, new_edge);
@@ -74,20 +82,18 @@ public class DWG implements DirectedWeightedGraph {
      * Note: if the graph was changed since the iterator was constructed - a RuntimeException should be thrown.
      * @return Iterator<node_data>
      */
-    public Iterator<Node> nodeIter(){
-        List<Node> l  = new ArrayList<Node>( this.Nodes.values() );
+    public Iterator<NodeData> nodeIter(){
+        List<NodeData> l  = new ArrayList<>( this.Nodes.values() );
         return l.iterator();
-        // return (Iterator<Node>) this.Nodes.values();
     }
     /**
      * This method returns an Iterator for all the edges in this graph.
      * Note: if any of the edges going out of this node were changed since the iterator was constructed - a RuntimeException should be thrown.
      * @return Iterator<EdgeData>
      */
-    public Iterator<Edge> edgeIter(){
-        List<Edge> l  = new ArrayList<Edge>( this.Edges.values() );
+    public Iterator<EdgeData> edgeIter(){
+        List<EdgeData> l  = new ArrayList( this.Edges.values() );
         return l.iterator();
-        //return (Iterator<Edge>) Edges.values();
     }
 
 
@@ -97,7 +103,7 @@ public class DWG implements DirectedWeightedGraph {
      * @return Iterator<EdgeData>
      */
     public Iterator<EdgeData> edgeIter(int node_id){
-        List<EdgeData> l  = new ArrayList<>(this.Nodes.get(node_id).getEdges().values());
+        List<EdgeData> l  = new ArrayList(this.Nodes.get(node_id).getEdges().values());
         return l.iterator();
         //return (Iterator<EdgeData>) this.Nodes.get(node_id).getEdges().values();
     }
@@ -109,7 +115,9 @@ public class DWG implements DirectedWeightedGraph {
      * @return the data of the removed node (null if none).
      * @param key
      */
-    public NodeData removeNode(int key){ ////// check what is O(k)
+    public NodeData removeNode(int key){
+        this.changes_counter++;
+
         Node removedNode = this.Nodes.remove(key);
 
         ArrayList<String> edges_to_remove = new ArrayList<>();
@@ -137,8 +145,10 @@ public class DWG implements DirectedWeightedGraph {
      * @return the data of the removed edge (null if none).
      */
     public EdgeData removeEdge(int src, int dest){
+        this.changes_counter++;
+
         Edges.remove(src+","+dest);
-        return this.Nodes.get(src).removeEdge(dest);
+        return (EdgeData) this.Nodes.get(src).removeEdge(dest);
     }
     /** Returns the number of vertices (nodes) in the graph.
      * Note: this method should run in O(1) time.
@@ -160,17 +170,16 @@ public class DWG implements DirectedWeightedGraph {
      * @return
      */
     public int getMC(){
-
-        //
-
-        return 0;
+        return this.changes_counter;
     }
 
     private void setEdges(HashMap<String, Edge> edges){
+        this.changes_counter = 0;
         this.Edges = edges;
     }
 
     private void setNodes(HashMap<Integer, Node> nodes){
+        this.changes_counter = 0;
         this.Nodes = nodes;
     }
 
@@ -197,26 +206,25 @@ public class DWG implements DirectedWeightedGraph {
     }
 
     public void colorWhite(){
-        for(Iterator<Node> it = this.nodeIter(); it.hasNext();){
-            Node node = it.next();
+        for(Iterator<NodeData> it = this.nodeIter(); it.hasNext();){
+            NodeData node = it.next();
             node.setTag(WHITE);
         }
     }
 
     public DWG transpose() {
         DWG T_dwg = new DWG();
-        Iterator<Node> iter = this.nodeIter();
+        Iterator<NodeData> iter = this.nodeIter();
         while (iter.hasNext()){
-            Node node = iter.next().copy();
+            Node node = ((Node) iter.next()).copy();
             node.cleanEdges();
             T_dwg.addNode(node);
         }
-        Iterator<Edge> iter_edge = this.edgeIter();
+        Iterator<EdgeData> iter_edge = this.edgeIter();
         while (iter_edge.hasNext()){
-            Edge e = iter_edge.next().copy();
+            Edge e = ((Edge)iter_edge.next()).copy();
             T_dwg.connect(e.getDest(), e.getSrc(), e.getWeight());
         }
-
         return T_dwg;
     }
 }
