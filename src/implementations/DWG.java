@@ -2,10 +2,8 @@ package implementations;
 
 import api.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * This interface represents a Directional Weighted Graph,
@@ -82,10 +80,90 @@ public class DWG implements DirectedWeightedGraph {
      * Note: if the graph was changed since the iterator was constructed - a RuntimeException should be thrown.
      * @return Iterator<node_data>
      */
+//    @Override
+//    public Iterator<NodeData> nodeIter(){
+//        List<NodeData> l  = new ArrayList<>( this.Nodes.values() );
+//        return l.iterator();
+//    }
+
+    @Override
     public Iterator<NodeData> nodeIter(){
         List<NodeData> l  = new ArrayList<>( this.Nodes.values() );
-        return l.iterator();
+
+        return new Iterator<>(){
+
+            private Iterator<NodeData> itr = l.iterator();
+            private NodeData current = null;
+            private int mc = getMC();
+            private boolean canRemove = false;
+
+
+            /**
+             * @return {@code true} if the iteration has more elements
+             */
+            @Override
+            public boolean hasNext() {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                return itr.hasNext();
+            }
+
+            /**
+             * @return the next element in the iteration
+             * @throws NoSuchElementException if the iteration has no more elements
+             */
+            @Override
+            public NodeData next() {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                if (hasNext()) {
+                    current = itr.next();
+                    this.canRemove = true;
+                    return current;
+                } else throw new NoSuchElementException("the Iterator Has No Next Node");
+            }
+
+            /**
+             * Removes from the underlying collection the last element returned
+             * by this iterator (optional operation).  This method can be called
+             * only once per call to {@link #next}.
+             **/
+            @Override
+            public void remove() {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                if (!this.canRemove)
+                {
+                    throw new IllegalStateException("can't remove twice in a row without next() method between them");
+                }
+                if(current != null){
+                    removeNode(current.getKey());
+                    this.canRemove = false;
+                    this.mc = getMC();
+                }
+            }
+
+            /**
+             * Performs the given action for each remaining element until all elements
+             * have been processed or the action throws an exception.  Actions are
+             * performed in the order of iteration, if that order is specified.
+             * Exceptions thrown by the action are relayed to the caller.
+             */
+            @Override
+            public void forEachRemaining(Consumer<? super NodeData> action) {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                while (itr.hasNext()) {
+                    action.accept(next());
+                }
+            }
+        };
     }
+
     /**
      * This method returns an Iterator for all the edges in this graph.
      * Note: if any of the edges going out of this node were changed since the iterator was constructed - a RuntimeException should be thrown.
@@ -93,7 +171,8 @@ public class DWG implements DirectedWeightedGraph {
      */
     public Iterator<EdgeData> edgeIter(){
         List<EdgeData> l  = new ArrayList( this.Edges.values() );
-        return l.iterator();
+
+        return getEdgeDataIterator(l);
     }
 
 
@@ -104,8 +183,83 @@ public class DWG implements DirectedWeightedGraph {
      */
     public Iterator<EdgeData> edgeIter(int node_id){
         List<EdgeData> l  = new ArrayList(this.Nodes.get(node_id).getEdges().values());
-        return l.iterator();
-        //return (Iterator<EdgeData>) this.Nodes.get(node_id).getEdges().values();
+
+        return getEdgeDataIterator(l);
+    }
+
+    private Iterator<EdgeData> getEdgeDataIterator(List<EdgeData> l) {
+        return new Iterator<>(){
+
+            private Iterator<EdgeData> itr = l.iterator();
+            private EdgeData current = null;
+            private int mc = getMC();
+            private boolean canRemove = false;
+
+
+            /**
+             * @return {@code true} if the iteration has more elements
+             */
+            @Override
+            public boolean hasNext() {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                return itr.hasNext();
+            }
+
+            /**
+             * @return the next element in the iteration
+             * @throws NoSuchElementException if the iteration has no more elements
+             */
+            @Override
+            public EdgeData next() {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                if (hasNext()) {
+                    current = itr.next();
+                    this.canRemove = true;
+                    return current;
+                } else throw new NoSuchElementException("the Iterator Has No Next Edge");
+            }
+
+            /**
+             * Removes from the underlying collection the last element returned
+             * by this iterator (optional operation).  This method can be called
+             * only once per call to {@link #next}.
+             **/
+            @Override
+            public void remove() {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                if (!this.canRemove)
+                {
+                    throw new IllegalStateException("can't remove twice in a row without next() method between them");
+                }
+                if(current != null){
+                    removeEdge(current.getSrc(), current.getDest());
+                    this.canRemove = false;
+                    this.mc = getMC();
+                }
+            }
+
+            /**
+             * Performs the given action for each remaining element until all elements
+             * have been processed or the action throws an exception.  Actions are
+             * performed in the order of iteration, if that order is specified.
+             * Exceptions thrown by the action are relayed to the caller.
+             */
+            @Override
+            public void forEachRemaining(Consumer<? super EdgeData> action) {
+                if(this.mc != getMC()){
+                    throw new RuntimeException("Graph Was Changed!");
+                }
+                while (itr.hasNext()) {
+                    action.accept(next());
+                }
+            }
+        };
     }
 
     /**
