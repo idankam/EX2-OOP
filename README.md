@@ -1,6 +1,6 @@
 # EX2-OOP
 
-![image](https://user-images.githubusercontent.com/79406881/145828030-6db858d6-f8ed-4651-af15-2d8ca2f1e1bc.png)
+![image](https://user-images.githubusercontent.com/79406881/145828266-603cd7e3-1c1e-4f1e-b7f2-fc8585fb20e7.png)
 
 Graphs and graphs-algorithms explanations:
 
@@ -94,11 +94,13 @@ getGraph – returning the graph.
 
 Copy – coping the graph.
 
-Is connected – a function that is checking if the graph is connected by using BFS algorithm we are checking on one node and after that using the transpose dunction and checking on the transpose if there is a rout from this node in the graph and also in the transpose graph so the graph is connected.
-
 BFS – a searching algorithm that is getting the graph and a node and painting every node he get to.
 
 Dijkstra – this is the an algorithm that we are using to get the shortest path, this algorithm is returning the shortest paths from a node to all the other nodes. For more information: (https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm).
+
+Is connected – a function that is checking if the graph is connected by using BFS algorithm we are checking on one node and after that using the transpose dunction and checking on the transpose if there is a rout from this node in the graph and also in the transpose graph so the graph is connected.
+
+Is connected GUI example:
 
 sortestPathDist – calling the Dijkstra algorithm and by that returning the chortest path weight.
 
@@ -126,9 +128,14 @@ File – Where the options are to Save and to load from the file, by using the a
 
 UPDATE – where are the options to edit the nodes and the edges of the graph(removing and addition).
 
+![image](https://user-images.githubusercontent.com/79406881/145828412-b4c21116-edbb-43e7-b5fb-01ade4afa00d.png)
+
 USE ALGORITHMS – where there are all the algorithms we can find in Class DWGAlgorithms.
 
-We did it by building 5 classes:
+![image](https://user-images.githubusercontent.com/79406881/145828485-200b4dd1-b795-470b-9259-e57ab50586f7.png)
+
+
+### We did it by building 5 classes:
 
 GUI\_WINDOW – this is the class which is showing the screen.
 
@@ -142,6 +149,9 @@ GUI\_NODES – drawing the circles(nodes) by normalizing them by the location an
 
 NOTE : we also added a function that while searching the shortest path between the nodes(while running shortest path algorithm or tsp) we drawing the path and showing the weight of the edge. This is happening also when we are adding an edge. We also showing the node while adding it and the center while searching it.
 
+GUI example (shortest path algoritm):
+
+![image](https://user-images.githubusercontent.com/79406881/145828974-c307b78c-fffc-44fa-a0be-ce191b40054b.png)
 
 # Performance report:
 
