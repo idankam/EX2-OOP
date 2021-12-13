@@ -162,11 +162,13 @@ public class GUI_ADDITIONAL_WINDOW extends JFrame implements ActionListener {
                 gui_window.unique_nodes = unique_n;
                 update_graph_display();
 
+                output_text += "<html>";
                 for (int i = 0; i < list.size(); i++) {
                     if (i != list.size() - 1) {
                         output_text += "" + list.get(i).getKey() + " -> ";
                     } else output_text += "" + list.get(i).getKey();
                 }
+                output_text += "</html>";
             }
             else{
                 output_text = "<html>there is no path between the nodes!</html>";
