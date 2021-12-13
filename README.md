@@ -151,7 +151,7 @@ NOTE : we also added a function that while searching the shortest path between t
 
 GUI example (shortest path algoritm):
 
-![image](https://user-images.githubusercontent.com/79406881/145828974-c307b78c-fffc-44fa-a0be-ce191b40054b.png)
+![image](https://user-images.githubusercontent.com/79406881/145829442-678a257a-740c-42a3-b52c-5e0a5e7a9a96.png)
 
 # Performance report:
 
