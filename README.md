@@ -1,5 +1,7 @@
 # EX2-OOP
 
+![image](https://user-images.githubusercontent.com/79406881/145828030-6db858d6-f8ed-4651-af15-2d8ca2f1e1bc.png)
+
 Graphs and graphs-algorithms explanations:
 
 ### Class Edge : This class represents the edges between two nodes , source and destinations in the graph.
